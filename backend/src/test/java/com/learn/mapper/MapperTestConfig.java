@@ -61,7 +61,7 @@ public class MapperTestConfig {
         // SQLite TEXT timestamps can be written by Liquibase as "yyyy-MM-dd HH:mm:ss"
         // while application code may use ISO_LOCAL_DATE_TIME. Support both for mapper tests.
         jdbi.registerColumnMapper(LocalDateTime.class, (rs, columnNumber, ctx) -> parseLocalDateTime(rs.getString(columnNumber)));
-        jdbi.registerArgument(new AbstractArgumentFactory<>(Types.VARCHAR) {
+        jdbi.registerArgument(new AbstractArgumentFactory<LocalDateTime>(Types.VARCHAR) {
             @Override
             protected Argument build(LocalDateTime value, org.jdbi.v3.core.config.ConfigRegistry config) {
                 return new ObjectArgument(value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), Types.VARCHAR);
