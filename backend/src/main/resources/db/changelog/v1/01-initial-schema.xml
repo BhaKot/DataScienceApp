@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Version 1.0 - Initial Database Schema -->
+    <!-- Created: 2026-02-07 -->
+    <!-- Description: Creates initial tables for samples, batches, and results -->
+
+    <!-- Create Batches Table -->
+    <changeSet id="001-create-batches-table" author="learn">
+        <createTable tableName="batches">
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="batch_name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(50)" defaultValue="CREATED"/>
+            <column name="sample_count" type="INT" defaultValue="0"/>
+            <column name="created_at" type="TEXT" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TEXT" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create Samples Table -->
+    <changeSet id="002-create-samples-table" author="learn">
+        <createTable tableName="samples">
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sample_id" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="batch_id" type="INTEGER">
+                <constraints foreignKeyName="fk_samples_batch" references="batches(id)"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(50)" defaultValue="PENDING"/>
+            <column name="created_at" type="TEXT" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TEXT" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create Results Table -->
+    <changeSet id="003-create-results-table" author="learn">
+        <createTable tableName="results">
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="batch_id" type="INTEGER" >
+                <constraints nullable="false" foreignKeyName="fk_results_batch" references="batches(id)"/>
+            </column>
+            <column name="sample_id" type="VARCHAR(100)"/>
+            <column name="ct_value" type="DOUBLE"/>
+            <column name="dye" type="VARCHAR(50)"/>
+            <column name="status" type="VARCHAR(50)" defaultValue="PROCESSED"/>
+            <column name="score" type="DOUBLE"/>
+            <column name="created_at" type="TEXT" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create Indexes for Performance -->
+    <changeSet id="004-create-indexes" author="learn">
+        <createIndex tableName="samples" indexName="idx_samples_batch_id">
+            <column name="batch_id"/>
+        </createIndex>
+        <createIndex tableName="results" indexName="idx_results_batch_id">
+            <column name="batch_id"/>
+        </createIndex>
+        <createIndex tableName="results" indexName="idx_results_sample_id">
+            <column name="sample_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
