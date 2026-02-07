@@ -20,7 +20,7 @@ public interface SampleDAO {
     String SELECT_BY_SAMPLE_ID = SELECT_ALL + "AND sample_id=:sampleId";
     String SELECT_BY_BATCH_ID = SELECT_ALL + "AND batch_id=:batchId";
 
-        String INSERT = """
+    String INSERT = """
                 INSERT INTO samples (
                     sample_id, batch_id, description, status, created_at, updated_at
                 )
