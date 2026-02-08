@@ -2,6 +2,7 @@ package com.learn.mapper;
 
 import com.learn.dao.SampleDAO;
 import com.learn.dto.SampleAggregateDTO;
+import com.learn.dto.SampleBatchAggregateDTO;
 import com.learn.dto.SampleDTO;
 import com.learn.entity.SampleEntity;
 import com.learn.util.DomainMapper;
@@ -43,6 +44,10 @@ public class RDBMSSampleMapper {
 
     public SampleAggregateDTO findAggregateBySampleId(String sampleId) {
         return jdbi.withExtension(SampleDAO.class, dao -> dao.findAggregateBySampleId(sampleId));
+    }
+
+    public SampleBatchAggregateDTO findEntityAggregateBySampleId(String sampleId) {
+        return jdbi.withExtension(SampleDAO.class, dao -> dao.findEntityAggregateBySampleId(sampleId));
     }
 
     public List<SampleDTO> getAll() {

@@ -3,6 +3,7 @@ package com.learn.mapper;
 import com.learn.dto.BatchDTO;
 import com.learn.dto.ResultDTO;
 import com.learn.dto.SampleAggregateDTO;
+import com.learn.dto.SampleBatchAggregateDTO;
 import com.learn.dto.SampleDTO;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -233,4 +234,20 @@ public class MapperTest {
         assertThat(aggregate.getBatch().getBatchName()).isEqualTo(testBatch.getBatchName());
         assertThat(aggregate.getBatch().getStatus()).isEqualTo(testBatch.getStatus());
     }
+    @Test
+    public void testSampleEntityAggregateJoinIncludesSampleAndBatch() {
+        SampleBatchAggregateDTO aggregate = sampleMapper.findEntityAggregateBySampleId(testSample.getSampleId());
+
+        assertThat(aggregate).isNotNull();
+        assertThat(aggregate.getSample()).isNotNull();
+        assertThat(aggregate.getBatch()).isNotNull();
+
+        assertThat(aggregate.getSample().getId()).isEqualTo(testSample.getId());
+        assertThat(aggregate.getSample().getSampleId()).isEqualTo(testSample.getSampleId());
+        assertThat(aggregate.getSample().getBatchId()).isEqualTo(testBatch.getId());
+
+        assertThat(aggregate.getBatch().getId()).isEqualTo(testBatch.getId());
+        assertThat(aggregate.getBatch().getBatchName()).isEqualTo(testBatch.getBatchName());
+    }
+
 }
