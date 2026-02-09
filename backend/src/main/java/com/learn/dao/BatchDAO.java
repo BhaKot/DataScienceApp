@@ -20,7 +20,7 @@ public interface BatchDAO {
     String SELECT_BY_NAME = SELECT_ALL + "AND batch_name=:batchName";
     String SELECT_BY_STATUS = SELECT_ALL + "AND status=:status";
 
-        String INSERT = """
+    String INSERT = """
                 INSERT INTO batches (
                     batch_name, description, status, sample_count, created_at, updated_at
                 )

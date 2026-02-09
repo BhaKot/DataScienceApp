@@ -1,8 +1,12 @@
 package com.learn.dao;
 
+import com.learn.dto.SampleAggregateDTO;
+import com.learn.dto.SampleBatchAggregateDTO;
+import com.learn.entity.BatchEntity;
 import com.learn.entity.SampleEntity;
 // ...existing code...
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.config.RegisterConstructorMappers;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.customizer.BindFields;
@@ -20,7 +24,50 @@ public interface SampleDAO {
     String SELECT_BY_SAMPLE_ID = SELECT_ALL + "AND sample_id=:sampleId";
     String SELECT_BY_BATCH_ID = SELECT_ALL + "AND batch_id=:batchId";
 
-        String INSERT = """
+    String SELECT_AGGREGATE_BY_SAMPLE_ID = """
+        SELECT
+            s.id,
+            s.sample_id,
+            s.batch_id,
+            s.description,
+            s.status,
+            s.created_at,
+            s.updated_at,
+            b.id AS batchEntity_id,
+            b.batch_name AS batchEntity_batch_name,
+            b.description AS batchEntity_description,
+            b.status AS batchEntity_status,
+            b.sample_count AS batchEntity_sample_count,
+            b.created_at AS batchEntity_created_at,
+            b.updated_at AS batchEntity_updated_at
+        FROM samples s
+        JOIN batches b ON b.id = s.batch_id
+        WHERE s.sample_id = :sampleId
+        """;
+
+
+    String SELECT_ENTITY_AGGREGATE_BY_SAMPLE_ID = """
+        SELECT
+            s.id AS sample_id,
+            s.sample_id AS sample_sample_id,
+            s.batch_id AS sample_batch_id,
+            s.description AS sample_description,
+            s.status AS sample_status,
+            s.created_at AS sample_created_at,
+            s.updated_at AS sample_updated_at,
+            b.id AS batch_id,
+            b.batch_name AS batch_batch_name,
+            b.description AS batch_description,
+            b.status AS batch_status,
+            b.sample_count AS batch_sample_count,
+            b.created_at AS batch_created_at,
+            b.updated_at AS batch_updated_at
+        FROM samples s
+        JOIN batches b ON b.id = s.batch_id
+        WHERE s.sample_id = :sampleId
+        """;
+
+    String INSERT = """
                 INSERT INTO samples (
                     sample_id, batch_id, description, status, created_at, updated_at
                 )
@@ -53,6 +100,21 @@ public interface SampleDAO {
 
     @SqlQuery(SELECT_BY_BATCH_ID)
     List<SampleEntity> findByBatchId(@Bind("batchId") Long batchId);
+
+    @RegisterConstructorMappers({
+        @RegisterConstructorMapper(SampleAggregateDTO.class),
+        @RegisterConstructorMapper(value = BatchEntity.class, prefix = "batchEntity")
+    })
+    @SqlQuery(SELECT_AGGREGATE_BY_SAMPLE_ID)
+    SampleAggregateDTO findAggregateBySampleId(@Bind("sampleId") String sampleId);
+
+    @RegisterConstructorMappers({
+        @RegisterConstructorMapper(SampleBatchAggregateDTO.class),
+        @RegisterConstructorMapper(value = SampleEntity.class, prefix = "sample"),
+        @RegisterConstructorMapper(value = BatchEntity.class, prefix = "batch")
+    })
+    @SqlQuery(SELECT_ENTITY_AGGREGATE_BY_SAMPLE_ID)
+    SampleBatchAggregateDTO findEntityAggregateBySampleId(@Bind("sampleId") String sampleId);
 
     // Write path: use flat write entity
     @SqlUpdate(INSERT)

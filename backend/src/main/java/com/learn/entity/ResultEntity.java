@@ -13,7 +13,7 @@ public class ResultEntity {
 
     private Long id;
 
-    private BatchEntity batch;
+    private Long batchId;
 
     private String sampleId;
 
